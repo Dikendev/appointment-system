@@ -1,10 +1,19 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
+import { UserModule } from './domain/user/user.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [UserModule],
+  imports: [
+    UserModule,
+    CacheModule.register({
+      isGlobal: true,
+      store: 'memory',
+      max: 10,
+      ttl: 600,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
