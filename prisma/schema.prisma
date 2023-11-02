@@ -12,15 +12,33 @@ datasource db {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
-  name       String
-  email      String     @unique
-  businesses Business[]
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  password String
+  bookings Booking[]
 }
 
-model Business {
-  id      Int    @id @default(autoincrement())
-  name    String @unique
-  ownerId Int
-  owner   User   @relation(fields: [ownerId], references: [id])
+model Client {
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  bookings Booking[]
+}
+
+model Service {
+  id       Int       @id @default(autoincrement())
+  name     String
+  bookings Booking[]
+}
+
+model Booking {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  clientId  Int
+  serviceId Int
+  date      DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  client    Client   @relation(fields: [clientId], references: [id])
+  service   Service  @relation(fields: [serviceId], references: [id])
 }
