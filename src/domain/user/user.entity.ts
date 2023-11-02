@@ -1,7 +1,9 @@
-import { Business } from '../business/business.entity';
+import { Booking } from '@prisma/client';
 
 export class User {
   id: string;
   name: string;
-  businesses: Business[];
+  email: string;
+  password: string;
+  bookings: Booking[];
 }

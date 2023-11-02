@@ -68,4 +68,10 @@ export class UserService {
       where,
     });
   }
+
+  async deleteUsers(where: Prisma.UserWhereInput) {
+    return this.prisma.user.deleteMany({
+      where,
+    });
+  }
 }
