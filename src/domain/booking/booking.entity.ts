@@ -1,5 +1,5 @@
 import { Client, Service, User } from '@prisma/client';
-import { IsDate, IsInt, IsNotEmpty } from 'class-validator';
+import { IsDateString, IsInt, IsNotEmpty } from 'class-validator';
 
 export interface Booking {
   id: number;
@@ -12,7 +12,7 @@ export interface Booking {
 }
 
 export class CreateBookingDTO {
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   date: Date;
 
