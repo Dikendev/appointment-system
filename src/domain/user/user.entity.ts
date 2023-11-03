@@ -1,5 +1,4 @@
 import { Booking } from '@prisma/client';
-import { Exclude, Expose } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class User {
