@@ -7,6 +7,8 @@ import { PrismaClient } from '@prisma/client';
 import { UserService } from './domain/user/user.service';
 import { PrismaService } from './prisma.service';
 import { ServiceService } from './domain/service/service.service';
+import { ClientService } from './domain/client/client.service';
+import { BookingService } from './domain/booking/booking.service';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { ServiceService } from './domain/service/service.service';
     UserService,
     PrismaService,
     ServiceService,
+    ClientService,
+    BookingService,
     { provide: PrismaClient, useValue: new PrismaClient() },
   ],
 })
