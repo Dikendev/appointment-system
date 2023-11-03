@@ -3,6 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Prisma, PrismaClient, User } from '@prisma/client';
+import { UserResponseDTO } from './user.entity';
 @Injectable()
 export class UserService {
   constructor(
@@ -32,7 +33,7 @@ export class UserService {
     take?: number;
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithAggregationInput;
+    orderBy?: Prisma.UserOrderByWithRelationInput;
   }): Promise<User[]> {
     const { skip, take, cursor, where, orderBy } = params;
 
@@ -73,5 +74,23 @@ export class UserService {
     return this.prisma.user.deleteMany({
       where,
     });
+  }
+
+  async findUserWithBookings(userId: number): Promise<UserResponseDTO> {
+    const user = this.prisma.user.findUnique({
+      where: {
+        id: Number(userId),
+      },
+      include: {
+        bookings: true,
+      },
+    });
+
+    return {
+      id: (await user).id,
+      name: (await user).name,
+      email: (await user).email,
+      bookings: (await user).bookings,
+    };
   }
 }
