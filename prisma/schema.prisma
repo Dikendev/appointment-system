@@ -12,24 +12,46 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  name     String
-  email    String    @unique
-  password String
-  bookings Booking[]
+  id             Int           @id @default(autoincrement())
+  name           String
+  email          String        @unique
+  password       String
+  profilePicture String?
+  phoneNumber    String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  workingTimes   WorkingTime[]
+  bookings       Booking[]
 }
 
 model Client {
-  id       Int       @id @default(autoincrement())
-  name     String
-  email    String    @unique
-  bookings Booking[]
+  id             Int       @id @default(autoincrement())
+  name           String
+  email          String?   @unique
+  profilePicture String?
+  phoneNumber    String?
+  password       String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  bookings       Booking[]
 }
 
 model Service {
-  id       Int       @id @default(autoincrement())
-  name     String
-  bookings Booking[]
+  id              Int       @id @default(autoincrement())
+  name            String    @unique
+  price           Int
+  requiredTimeMin Int
+  serviceImage    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  bookings        Booking[]
+}
+
+model WorkingTime {
+  id     Int    @id @default(autoincrement())
+  time   String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Booking {
@@ -37,8 +59,10 @@ model Booking {
   userId    Int
   clientId  Int
   serviceId Int
-  date      DateTime
-  user      User     @relation(fields: [userId], references: [id])
+  total     Int
+  startAt   DateTime
+  finishAt  DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   client    Client   @relation(fields: [clientId], references: [id])
   service   Service  @relation(fields: [serviceId], references: [id])
 }
