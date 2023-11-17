@@ -93,4 +93,19 @@ export class UserService {
       bookings: (await user).bookings,
     };
   }
+
+  async getUserWorkingTimeByUser(
+    where: Prisma.ScheduleWhereInput,
+  ): Promise<any> {
+    const time = this.prisma.user.findUnique({
+      where: {
+        id: Number(where.id),
+      },
+      select: {
+        workingTimes: true,
+      },
+    });
+
+    return time;
+  }
 }
