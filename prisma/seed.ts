@@ -15,6 +15,29 @@ const serviceData: Prisma.ServiceCreateInput[] = [
   },
 ];
 
+const userData: Prisma.UserCreateInput[] = [
+  {
+    name: 'Cristina Freitas',
+    email: 'Cristina@gmail.com',
+    password: '12345',
+  },
+  {
+    name: 'Diego Kennedy ',
+    email: 'diego@gmail.com',
+    password: '737373',
+  },
+];
+
+const clientData: Prisma.ClientCreateInput[] = [
+  {
+    name: 'Joy',
+    email: 'joy@gmail.com',
+  },
+  {
+    name: 'David',
+    email: 'David@gmail.com',
+  },
+];
 async function main() {
   console.log(`Start seeding ...`);
 
@@ -23,6 +46,20 @@ async function main() {
       data: u,
     });
     console.log(`Created service with id:${service.id}`);
+  }
+
+  for (const u of userData) {
+    const user = await prisma.user.create({
+      data: u,
+    });
+    console.log(`Created user with id:${user.id}`);
+  }
+
+  for (const u of clientData) {
+    const client = await prisma.client.create({
+      data: u,
+    });
+    console.log(`Created client with id:${client.id}`);
   }
   console.log(`Seeding finished`);
 }
