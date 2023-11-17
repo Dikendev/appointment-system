@@ -15,6 +15,9 @@ export class CreateUserDTO {
   @IsNotEmpty()
   @IsString()
   password: string;
+  profilePicture: string;
+  phoneNumber: string;
+  workingTimes: WorkingTime[];
 }
 
 export class UserResponseDTO {
@@ -22,4 +25,8 @@ export class UserResponseDTO {
   name: string;
   email: string;
   bookings: Booking[];
+}
+
+export class WorkingTime {
+  time: string;
 }
