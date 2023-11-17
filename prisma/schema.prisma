@@ -12,16 +12,24 @@ datasource db {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   name           String
-  email          String        @unique
+  email          String     @unique
   password       String
   profilePicture String?
   phoneNumber    String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  workingTimes   WorkingTime[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  workingTimes   Schedule[]
   bookings       Booking[]
+}
+
+model Schedule {
+  id     Int      @id @default(autoincrement())
+  from   DateTime
+  to     DateTime
+  userId Int
+  user   User     @relation(fields: [userId], references: [id])
 }
 
 model Client {
@@ -45,13 +53,6 @@ model Service {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   bookings        Booking[]
-}
-
-model WorkingTime {
-  id     Int    @id @default(autoincrement())
-  time   String
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Booking {
