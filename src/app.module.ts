@@ -9,6 +9,9 @@ import { PrismaService } from './prisma.service';
 import { ServiceService } from './domain/service/service.service';
 import { ClientService } from './domain/client/client.service';
 import { BookingService } from './domain/booking/booking.service';
+import { ServiceController } from './domain/service/service.controller';
+import { ClientController } from './domain/client/client.controller';
+import { BookingController } from './domain/booking/booking.controller';
 
 @Module({
   imports: [
@@ -20,7 +23,12 @@ import { BookingService } from './domain/booking/booking.service';
       ttl: 600,
     }),
   ],
-  controllers: [AppController],
+  controllers: [
+    AppController,
+    ServiceController,
+    ClientController,
+    BookingController,
+  ],
   providers: [
     AppService,
     UserService,
