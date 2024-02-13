@@ -30,8 +30,8 @@ const userData: Prisma.UserCreateInput[] = [
 
 const clientData: Prisma.ClientCreateInput[] = [
   {
-    name: 'Joy',
-    email: 'joy@gmail.com',
+    name: 'Dedeco',
+    email: 'dedeco@gmail.com',
   },
   {
     name: 'David',
