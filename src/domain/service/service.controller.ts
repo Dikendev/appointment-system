@@ -29,9 +29,9 @@ export class ServiceController {
 
   @Get('/:id')
   async getService(@Param('id') id: string): Promise<ServiceModel> {
-    const service = this.serviceService.service({ id: Number(id) });
+    const service = await this.serviceService.service({ id: Number(id) });
 
-    if (!(await service)) {
+    if (!service) {
       throw new NotFoundException(`Serviço não encontrado`);
     }
 
