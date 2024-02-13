@@ -1,5 +1,13 @@
 import { Booking } from '@prisma/client';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 export class User {
   id: string;
@@ -10,23 +18,49 @@ export class User {
 }
 
 export class CreateUserDTO {
+  @IsNotEmpty()
+  @IsString()
   name: string;
+
+  @IsNotEmpty()
+  @IsString()
   email: string;
+
   @IsNotEmpty()
   @IsString()
   password: string;
-  profilePicture: string;
-  phoneNumber: string;
-  workingTimes: WorkingTime[];
+
+  @IsOptional()
+  @IsString()
+  profilePicture?: string;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => WorkingTime)
+  workingTime: WorkingTime[];
+}
+
+export class WorkingTime {
+  @IsOptional()
+  @IsDateString()
+  from: Date;
+
+  @IsOptional()
+  @IsDateString()
+  to: Date;
+
+  @IsOptional()
+  @IsNumber()
+  userId: number;
 }
 
 export class UserResponseDTO {
   id: number;
   name: string;
   email: string;
-  bookings: Booking[];
-}
-
-export class WorkingTime {
-  time: string;
+  bookings?: Booking[];
 }
