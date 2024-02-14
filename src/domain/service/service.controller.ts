@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ServiceService } from './service.service';
 import { Service as ServiceModel } from '@prisma/client';
-import { ServiceResponseDTO } from './service.model';
+import { ServiceResponseDTO } from './model/service.response';
 
 @Controller('service')
 export class ServiceController {
@@ -40,15 +40,15 @@ export class ServiceController {
 
   @Get()
   async getAllServices(): Promise<ServiceModel[]> {
-    const services = this.serviceService.services({});
+    const services = await this.serviceService.services({});
 
-    if (!(await services).length) {
+    if (!services.length) {
       throw new NotFoundException('No services found');
     }
     return services;
   }
 
-  @Get('/price/:price')
+  @Get('price/:price')
   async getServicesByPrice(
     @Param('price') price: string,
   ): Promise<ServiceResponseDTO[]> {
@@ -57,7 +57,7 @@ export class ServiceController {
     });
   }
 
-  @Get('/time/:requiredTime')
+  @Get('time/:requiredTime')
   async getServicesByRequiredTime(
     @Param('requiredTime') requiredTime: string,
   ): Promise<ServiceResponseDTO[]> {
@@ -71,7 +71,6 @@ export class ServiceController {
   async deleteService(
     @Param('serviceName') serviceName: string,
   ): Promise<ServiceModel> {
-    console.log('serviceName', serviceName);
     return this.serviceService.deleteService(serviceName);
   }
 }
