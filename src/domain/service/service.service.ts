@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Prisma, Service as ServiceModel } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { ServiceResponseDTO } from './service.model';
+import { ServiceResponseDTO } from './model/service.response';
 
 @Injectable()
 export class ServiceService {
