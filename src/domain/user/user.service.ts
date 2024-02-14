@@ -3,7 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Prisma, PrismaClient, User } from '@prisma/client';
-import { UserResponseDTO } from './user.entity';
+import { UserResponseDto } from './model/user.response';
 @Injectable()
 export class UserService {
   constructor(
@@ -11,21 +11,14 @@ export class UserService {
     private readonly prisma: PrismaClient,
   ) {}
 
-  async getUserCACHE(key: string): Promise<any> {
-    console.log('user getUserCACHE', key);
-
-    return await this.cacheManager.get(key);
-  }
-  async addToCACHE(key: string, value: any) {
-    return await this.cacheManager.set(key, value, 0);
-  }
-
   async user(
     UserWhereUniqueInput: Prisma.UserWhereUniqueInput,
   ): Promise<User | null> {
-    return this.prisma.user.findUnique({
+    const user = this.prisma.user.findUnique({
       where: UserWhereUniqueInput,
     });
+
+    return user;
   }
 
   async users(params: {
@@ -47,9 +40,22 @@ export class UserService {
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({
-      data,
+    const user = this.prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        profilePicture: data.profilePicture,
+        phoneNumber: data.phoneNumber,
+        workingTimes: {
+          create: data.workingTimes?.create,
+        },
+        bookings: {
+          create: data.bookings?.create,
+        },
+      },
     });
+    return user;
   }
 
   async updateUser(params: {
@@ -57,7 +63,6 @@ export class UserService {
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
     const { where, data } = params;
-
     return this.prisma.user.update({
       where,
       data,
@@ -70,14 +75,15 @@ export class UserService {
     });
   }
 
-  async deleteUsers(where: Prisma.UserWhereInput) {
-    return this.prisma.user.deleteMany({
-      where,
-    });
-  }
+  // danger method lol
+  // async deleteUsers(where: Prisma.UserWhereInput) {
+  //   return this.prisma.user.deleteMany({
+  //     where,
+  //   });
+  // }
 
-  async findUserWithBookings(userId: number): Promise<UserResponseDTO> {
-    const user = this.prisma.user.findUnique({
+  async findUserWithBookings(userId: number): Promise<UserResponseDto> {
+    const user = await this.prisma.user.findUnique({
       where: {
         id: Number(userId),
       },
@@ -86,12 +92,7 @@ export class UserService {
       },
     });
 
-    return {
-      id: (await user).id,
-      name: (await user).name,
-      email: (await user).email,
-      bookings: (await user).bookings,
-    };
+    return user;
   }
 
   async getUserWorkingTimeByUser(
@@ -107,5 +108,13 @@ export class UserService {
     });
 
     return time;
+  }
+
+  async getUserCache(key: string): Promise<any> {
+    return await this.cacheManager.get(key);
+  }
+
+  async addToCache(key: string, value: any) {
+    return await this.cacheManager.set(key, value, 0);
   }
 }
