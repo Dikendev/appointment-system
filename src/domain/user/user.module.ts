@@ -9,5 +9,6 @@ import { PrismaClient } from '@prisma/client';
     { provide: PrismaClient, useValue: new PrismaClient() },
   ],
   controllers: [UserController],
+  exports: [UserService],
 })
 export class UserModule {}
