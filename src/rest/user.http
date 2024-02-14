@@ -1,5 +1,9 @@
 ###
-GET  http://localhost:3000/users HTTP/1.1
+GET http://localhost:3000/user/contains/di HTTP/1.1
+
+###
+GET http://localhost:3000/user/get-all HTTP/1.1
+
 
 ###
 POST http://localhost:3000/user HTTP/1.1
@@ -8,5 +12,7 @@ Content-Type: application/json
 {
     "name": "",
     "email": "",
-    "password": "",
+    "password": ""
 }
+
+###
