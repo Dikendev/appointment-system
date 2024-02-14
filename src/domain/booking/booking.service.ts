@@ -6,7 +6,6 @@ export class BookingService {
   constructor(private readonly prisma: PrismaClient) {}
 
   async createBooking(data: Prisma.BookingCreateInput): Promise<BookingModel> {
-    console.log('data', data);
     return await this.prisma.booking.create({
       data,
     });
