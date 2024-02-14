@@ -24,11 +24,7 @@ export class BookingController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createBooking(@Body() data: CreateBookingDTO): Promise<BookingModel> {
-    console.log('data', data);
-
     const { startAt, userId, clientId, serviceId } = data;
-
-    console.log('serviceId', serviceId);
 
     const serviceData = await this.serviceService.service({
       id: Number(serviceId),
@@ -77,7 +73,6 @@ export class BookingController {
   async getBookingByDay(
     @Query('date') date: string,
   ): Promise<ResponseBookingDTO[]> {
-    console.log(date);
     const bookings = await this.bookingService.getBookingByDay(date);
     return bookings.map((booking) => new ResponseBookingDTO(booking));
   }
