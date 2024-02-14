@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { UserModule } from './domain/user/user.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { PrismaClient } from '@prisma/client';
-import { UserService } from './domain/user/user.service';
 import { PrismaService } from './prisma.service';
 import { ServiceService } from './domain/service/service.service';
 import { ClientService } from './domain/client/client.service';
@@ -31,7 +30,6 @@ import { BookingController } from './domain/booking/booking.controller';
   ],
   providers: [
     AppService,
-    UserService,
     PrismaService,
     ServiceService,
     ClientService,
