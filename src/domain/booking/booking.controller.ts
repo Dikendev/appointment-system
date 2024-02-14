@@ -61,7 +61,7 @@ export class BookingController {
     return await this.bookingService.getAllBookings({});
   }
 
-  private addMinutesToDate(dateString: string, minutesToAdd: any) {
+  private addMinutesToDate(dateString: Date, minutesToAdd: any) {
     const date = new Date(dateString);
     date.setMinutes(date.getMinutes() + minutesToAdd);
 
