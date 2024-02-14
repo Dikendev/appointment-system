@@ -43,7 +43,6 @@ export class ServiceService {
     });
 
     if (alreadyExist) {
-      console.log(alreadyExist);
       throw new ForbiddenException('Already service with same name');
     }
     return this.prisma.service.create({
@@ -52,7 +51,6 @@ export class ServiceService {
   }
 
   async deleteService(serviceName: string) {
-    console.log('serviceName service ', serviceName);
     const service = await this.prisma.service.delete({
       where: { name: serviceName },
     });
