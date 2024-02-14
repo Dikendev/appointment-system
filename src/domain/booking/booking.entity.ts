@@ -14,17 +14,43 @@ export interface Booking {
 export class CreateBookingDTO {
   @IsDateString()
   @IsNotEmpty()
-  date: Date;
+  startAt: Date;
 
   @IsInt()
   @IsNotEmpty()
-  user: number;
+  userId: number;
 
   @IsInt()
   @IsNotEmpty()
-  client: number;
+  clientId: number;
 
   @IsInt()
   @IsNotEmpty()
-  service: number;
+  serviceId: number;
+}
+
+export class ResponseBookingDTO {
+  @IsDateString()
+  @IsNotEmpty()
+  startAt: Date;
+
+  @IsDateString()
+  @IsNotEmpty()
+  finishAt: Date;
+
+  @IsInt()
+  total: number;
+
+  user: User;
+  client: Client;
+  service: Service;
+
+  constructor(service: any) {
+    this.startAt = service.startAt;
+    this.finishAt = service.finishAt;
+    this.total = service.total;
+    this.user = service.user;
+    this.client = service.client;
+    this.service = service.service;
+  }
 }
