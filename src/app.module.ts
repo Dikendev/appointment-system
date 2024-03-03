@@ -1,40 +1,26 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './domain/user/user.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import { PrismaClient } from '@prisma/client';
-import { PrismaService } from './prisma.service';
-import { ServiceService } from './domain/service/service.service';
-import { ClientService } from './domain/client/client.service';
+import { ServiceService } from './domain/services/service.service';
 import { BookingService } from './domain/booking/booking.service';
-import { ServiceController } from './domain/service/service.controller';
-import { ClientController } from './domain/client/client.controller';
+import { ServiceController } from './domain/services/service.controller';
 import { BookingController } from './domain/booking/booking.controller';
+import { UsersModule } from './domain/users/users.module';
+import { ClientModule } from './domain/clients/client.module';
 
 @Module({
   imports: [
-    UserModule,
+    UsersModule,
     CacheModule.register({
       isGlobal: true,
       store: 'memory',
       max: 10,
       ttl: 600,
     }),
+    ClientModule,
   ],
-  controllers: [
-    AppController,
-    ServiceController,
-    ClientController,
-    BookingController,
-  ],
-  providers: [
-    AppService,
-    PrismaService,
-    ServiceService,
-    ClientService,
-    BookingService,
-    { provide: PrismaClient, useValue: new PrismaClient() },
-  ],
+  controllers: [AppController, ServiceController, BookingController],
+  providers: [AppService, ServiceService, BookingService],
 })
 export class AppModule {}
