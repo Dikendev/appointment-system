@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from '../../../../prisma/prisma.service';
+import { PrismaService } from '../../../external/prisma/prisma.service';
 import { ClientPrismaService } from '../repository/client-prisma.service';
 import { clientResponseMock, prismaMock } from './create-client-prisma-mock';
 import { NotFoundException } from '@nestjs/common';
