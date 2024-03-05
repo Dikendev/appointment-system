@@ -3,10 +3,7 @@
 /node_modules
 
 # Prisma
-/prisma/
 /prisma/migrations/dev.db
-/prisma/migrations/schema.prisma
-
 
 # Logs
 logs
