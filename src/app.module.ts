@@ -8,6 +8,7 @@ import { ServiceController } from './domain/services/service.controller';
 import { BookingController } from './domain/booking/booking.controller';
 import { UsersModule } from './domain/users/users.module';
 import { ClientModule } from './domain/clients/client.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ClientModule } from './domain/clients/client.module';
       ttl: 600,
     }),
     ClientModule,
+    ConfigModule,
   ],
   controllers: [AppController, ServiceController, BookingController],
   providers: [AppService, ServiceService, BookingService],
