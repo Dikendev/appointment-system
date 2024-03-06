@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const serviceData: Prisma.ServiceCreateInput[] = [
+const serviceData: Prisma.ProcedureCreateInput[] = [
   {
     name: 'Corte de cabelo',
     price: 80,
@@ -42,7 +42,7 @@ async function main() {
   console.log(`Start seeding ...`);
 
   for (const u of serviceData) {
-    const service = await prisma.service.create({
+    const service = await prisma.procedure.create({
       data: u,
     });
     console.log(`Created service with id:${service.id}`);
