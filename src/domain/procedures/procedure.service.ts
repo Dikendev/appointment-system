@@ -35,7 +35,7 @@ export class ProcedureService {
 
   async createProcedure(
     data: Prisma.ProcedureCreateInput,
-  ): Promise<ProcedureResponse> {
+  ): Promise<procedureModel> {
     const alreadyExist = await this.prisma.procedure.findUnique({
       where: {
         name: data.name,
