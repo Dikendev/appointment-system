@@ -1,19 +1,16 @@
 import { Prisma } from '@prisma/client';
-import { ClientRepository } from './client.repository';
-import { ClientResponse, CreateClientDTO } from '../model/client.model';
+import { ClientRepository } from './repository/client.repository';
+import { ClientResponse, CreateClientDTO } from './model/client.model';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../../../prisma/prisma.service';
+import { PrismaService } from '../../external/prisma/prisma.service';
 
 @Injectable()
 export class ClientPrismaService implements ClientRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async client(id: number): Promise<ClientResponse> {
-    const clientWhereUniqueInput =
-      id as unknown as Prisma.ClientWhereUniqueInput;
-
     const clientsResponse = await this.prisma.client.findUnique({
-      where: { id: Number(clientWhereUniqueInput) },
+      where: { id },
     });
 
     if (!clientsResponse) {
@@ -38,5 +35,13 @@ export class ClientPrismaService implements ClientRepository {
       data as unknown as Prisma.ClientCreateInput;
     const client = await this.prisma.client.create({ data: createPrismaInput });
     return new ClientResponse(client);
+  }
+
+  async deleteClient(id: number): Promise<void> {
+    try {
+      await this.prisma.client.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 }
