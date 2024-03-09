@@ -37,9 +37,9 @@ export class ClientPrismaService implements ClientRepository {
     return new ClientResponse(client);
   }
 
-  async deleteClient(id: number): Promise<void> {
+  async deleteClient(id: number): Promise<ClientResponse> {
     try {
-      await this.prisma.client.delete({ where: { id } });
+      return await this.prisma.client.delete({ where: { id } });
     } catch (error) {
       throw new NotFoundException();
     }

@@ -1,7 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../external/prisma/prisma.service';
-import { ClientPrismaService } from '../repository/client-prisma.service';
-import { clientResponseMock, prismaMock } from './create-client-prisma-mock';
+import { ClientPrismaService } from '../client-prisma.service';
+import {
+  clientMock,
+  clientResponseDelete,
+  clientResponseMock,
+  prismaMock,
+} from './create-client-prisma-mock';
 import { NotFoundException } from '@nestjs/common';
 import { CreateClientDTO } from '../model/client.model';
 import { plainToInstance } from 'class-transformer';
@@ -78,15 +83,9 @@ describe('ClientPrismaService', () => {
 
   describe('createClient', () => {
     it('should create a valid client', async () => {
-      const data: CreateClientDTO = {
-        name: 'any_name333',
-        email: 'any_email333@gmail.com',
-        phoneNumber: '99999',
-        password: '666',
-      };
-      const clientResponse = await clientPrismaService.createClient(data);
+      const clientResponse = await clientPrismaService.createClient(clientMock);
       expect(clientResponse).toEqual(clientResponseMock[0]);
-      expect(prisma.client.create).toBeCalledWith({ data });
+      expect(prisma.client.create).toBeCalledWith({ clientMock });
       expect(prisma.client.create).toBeCalledTimes(1);
     });
 
@@ -105,8 +104,8 @@ describe('ClientPrismaService', () => {
     it('should not accept create user without email', async () => {
       const data = {
         name: 'any_name333',
-        email: 'any_email333@gmail.com',
         phoneNumber: '99999',
+        password: '1234',
       };
       const empty = plainToInstance(CreateClientDTO, data);
 
@@ -124,6 +123,36 @@ describe('ClientPrismaService', () => {
 
       const errors = await validate(empty);
       expect(errors.length).not.toBe(0);
+    });
+  });
+
+  describe('deleteClient', () => {
+    const data: CreateClientDTO = {
+      name: 'any_name333',
+      email: 'any_email333@gmail.com',
+      phoneNumber: '99999',
+      password: '666',
+    };
+
+    it('should throw not found exception', async () => {
+      try {
+        await clientPrismaService.deleteClient(clientResponseMock[0].id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+      }
+      expect(prisma.client.delete).toBeCalledTimes(1);
+    });
+
+    it('should delete successfully a client', async () => {
+      prismaMock.client.delete.mockReturnValue(clientResponseDelete);
+
+      let userResponse = {};
+
+      try {
+        userResponse = await clientPrismaService.deleteClient(2);
+      } catch (error) {}
+      expect(prisma.client.delete).toBeCalledTimes(1);
+      expect(userResponse).toEqual(clientResponseDelete);
     });
   });
 });
