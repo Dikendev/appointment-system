@@ -146,11 +146,7 @@ describe('ClientPrismaService', () => {
     it('should delete successfully a client', async () => {
       prismaMock.client.delete.mockReturnValue(clientResponseDelete);
 
-      let userResponse = {};
-
-      try {
-        userResponse = await clientPrismaService.deleteClient(2);
-      } catch (error) {}
+      const userResponse = await clientPrismaService.deleteClient(2);
       expect(prisma.client.delete).toBeCalledTimes(1);
       expect(userResponse).toEqual(clientResponseDelete);
     });
