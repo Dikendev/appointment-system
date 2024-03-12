@@ -1,18 +1,18 @@
 import { Procedure as ProcedureModel } from '@prisma/client';
 
-export class ProcedureResponse implements ProcedureResponseModel {
+export class ProcedureResponse implements Partial<ProcedureResponseModel> {
   id: number;
   name: string;
   price: number;
   requiredTimeMin: number;
-  procedureImage: string;
+  procedureImage?: string;
 
   constructor(procedure: ProcedureModel) {
     this.id = procedure.id;
     this.name = procedure.name;
     this.price = procedure.price;
     this.requiredTimeMin = procedure.requiredTimeMin;
-    this.procedureImage = procedure.procedureImage;
+    this.procedureImage = procedure?.procedureImage;
   }
 }
 
