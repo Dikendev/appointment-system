@@ -1,41 +1,46 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { Procedure as procedureModel, Prisma } from '@prisma/client';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../external/prisma/prisma.service';
-import { ProcedureResponse } from './model/procedure.response';
+import { ProcedureRepository } from './repository/procedure.repository';
+import { ProcedureResponse, createProcedureDTO } from './model';
+
+export interface ProcedureQuery {
+  id?: number;
+  name?: string;
+}
 
 @Injectable()
-export class ProcedureService {
-  constructor(private prisma: PrismaService) {}
+export class ProcedureService implements ProcedureRepository {
+  constructor(private readonly prisma: PrismaService) {}
 
-  async procedure(
-    procedureWhereUniqueInput: Prisma.ProcedureWhereUniqueInput,
-  ): Promise<procedureModel | null> {
-    return this.prisma.procedure.findUnique({
-      where: procedureWhereUniqueInput,
+  async procedure(query: ProcedureQuery): Promise<ProcedureResponse> {
+    const procedureResponse = await this.prisma.procedure.findUnique({
+      where: query.id ? { id: query.id } : { name: query.name },
     });
+
+    if (!procedureResponse) {
+      throw new NotFoundException();
+    }
+
+    return new ProcedureResponse(procedureResponse);
   }
 
-  async procedures(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.ProcedureWhereUniqueInput;
-    where?: Prisma.ProcedureWhereInput;
-    orderBy?: Prisma.ProcedureOrderByWithRelationInput;
-  }): Promise<procedureModel[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+  async procedures(): Promise<ProcedureResponse[]> {
+    const procedureResponse = await this.prisma.procedure.findMany();
 
-    return this.prisma.procedure.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
+    if (!procedureResponse.length) {
+      throw new NotFoundException();
+    }
+
+    return procedureResponse.map(
+      (procedure) => new ProcedureResponse(procedure),
+    );
   }
 
-  async createProcedure(
-    data: Prisma.ProcedureCreateInput,
-  ): Promise<procedureModel> {
+  async createProcedure(data: createProcedureDTO): Promise<ProcedureResponse> {
     const alreadyExist = await this.prisma.procedure.findUnique({
       where: {
         name: data.name,
@@ -46,15 +51,20 @@ export class ProcedureService {
       throw new BadRequestException();
     }
 
-    return this.prisma.procedure.create({
-      data,
+    const procedureResponse = await this.prisma.procedure.create({
+      data: data,
     });
+
+    return new ProcedureResponse(procedureResponse);
   }
 
-  async deleteProcedure(procedureName: string) {
-    const procedure = await this.prisma.procedure.delete({
-      where: { name: procedureName },
-    });
-    return procedure;
+  async deleteProcedure(query: ProcedureQuery): Promise<ProcedureResponse> {
+    try {
+      return await this.prisma.procedure.delete({
+        where: query.id ? { id: query.id } : { name: query.name },
+      });
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 }
