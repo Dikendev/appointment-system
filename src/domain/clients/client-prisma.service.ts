@@ -1,8 +1,9 @@
 import { Prisma } from '@prisma/client';
 import { ClientRepository } from './repository/client.repository';
-import { ClientResponse, CreateClientDTO } from './model/client.model';
+import { CreateClientDTO } from './models/client-model.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../external/prisma/prisma.service';
+import { ClientResponse } from './models';
 
 @Injectable()
 export class ClientPrismaService implements ClientRepository {
