@@ -6,11 +6,12 @@ import {
   clientResponseDelete,
   clientResponseMock,
   prismaMock,
-} from './create-client-prisma-mock';
+} from './mocks/create-client-prisma-mock';
 import { NotFoundException } from '@nestjs/common';
-import { CreateClientDTO } from '../model/client.model';
+import { CreateClientDTO } from '../models/client-model.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { ClientResponse } from '../models';
 
 describe('ClientPrismaService', () => {
   let clientPrismaService: ClientPrismaService;
@@ -40,7 +41,7 @@ describe('ClientPrismaService', () => {
     expect(prisma).toBeDefined();
   });
 
-  describe('client', () => {
+  describe('client method', () => {
     it('should return one client by id', async () => {
       const clientResponse = await clientPrismaService.client(
         clientResponseMock[0].id,
@@ -64,7 +65,7 @@ describe('ClientPrismaService', () => {
     });
   });
 
-  describe('clients', () => {
+  describe('clients method', () => {
     it('should return all clients', async () => {
       const clientResponse = await clientPrismaService.clients();
       expect(clientResponse).toEqual(clientResponseMock);
@@ -81,11 +82,14 @@ describe('ClientPrismaService', () => {
     });
   });
 
-  describe('createClient', () => {
+  describe('createClient method', () => {
     it('should create a valid client', async () => {
+      prismaMock.client.create.mockReturnValue(clientResponseMock[0]);
+
+      const createUserResponse = new ClientResponse(clientResponseMock[0]);
       const clientResponse = await clientPrismaService.createClient(clientMock);
-      expect(clientResponse).toEqual(clientResponseMock[0]);
-      expect(prisma.client.create).toBeCalledWith({ clientMock });
+      expect(clientResponse).toEqual(createUserResponse);
+      expect(prisma.client.create).toBeCalledWith({ data: clientMock });
       expect(prisma.client.create).toBeCalledTimes(1);
     });
 
@@ -96,7 +100,6 @@ describe('ClientPrismaService', () => {
         phoneNumber: '99999',
       };
       const empty = plainToInstance(CreateClientDTO, data);
-
       const errors = await validate(empty);
       expect(errors.length).not.toBe(0);
     });
@@ -108,7 +111,6 @@ describe('ClientPrismaService', () => {
         password: '1234',
       };
       const empty = plainToInstance(CreateClientDTO, data);
-
       const errors = await validate(empty);
       expect(errors.length).not.toBe(0);
     });
@@ -120,20 +122,12 @@ describe('ClientPrismaService', () => {
         phoneNumber: '99999',
       };
       const empty = plainToInstance(CreateClientDTO, data);
-
       const errors = await validate(empty);
       expect(errors.length).not.toBe(0);
     });
   });
 
-  describe('deleteClient', () => {
-    const data: CreateClientDTO = {
-      name: 'any_name333',
-      email: 'any_email333@gmail.com',
-      phoneNumber: '99999',
-      password: '666',
-    };
-
+  describe('deleteClient method', () => {
     it('should throw not found exception', async () => {
       try {
         await clientPrismaService.deleteClient(clientResponseMock[0].id);
