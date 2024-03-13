@@ -9,14 +9,14 @@ export class BookingResponse
   finishAt: Date;
   userId: number;
   clientId: number;
-  serviceId: number;
+  procedureId: number;
 
-  constructor(service: BookingModel) {
-    this.total = service.total;
-    this.startAt = service.startAt;
-    this.finishAt = service.finishAt;
-    this.userId = service.userId;
-    this.clientId = service.clientId;
-    this.serviceId = service.serviceId;
+  constructor(booking: BookingModel) {
+    this.total = booking.total;
+    this.startAt = booking.startAt;
+    this.finishAt = booking.finishAt;
+    this.userId = booking.userId;
+    this.clientId = booking.clientId;
+    this.procedureId = booking.procedureId;
   }
 }
