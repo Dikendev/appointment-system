@@ -26,5 +26,5 @@ export class BookingDTO
 
   @IsNumber()
   @IsNotEmpty()
-  serviceId: number;
+  procedureId: number;
 }
