@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { ClientRepository } from './repository/client.repository';
 import { CreateClientDTO } from './models/client-model.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -32,9 +31,7 @@ export class ClientPrismaService implements ClientRepository {
   }
 
   async createClient(data: CreateClientDTO): Promise<ClientResponse> {
-    const createPrismaInput: Prisma.ClientCreateInput =
-      data as unknown as Prisma.ClientCreateInput;
-    const client = await this.prisma.client.create({ data: createPrismaInput });
+    const client = await this.prisma.client.create({ data });
     return new ClientResponse(client);
   }
 
