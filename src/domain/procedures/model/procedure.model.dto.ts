@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class createProcedureDTO implements ProcedureCreateModel {
+export class CreateProcedureDto implements ProcedureCreateModel {
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -14,7 +14,19 @@ export class createProcedureDTO implements ProcedureCreateModel {
   @IsNumber()
   requiredTimeMin: number;
 
+  @IsOptional()
+  @IsString()
   procedureImage?: string;
 }
 
 export type ProcedureCreateModel = Prisma.ProcedureCreateInput;
+
+export class ProcedureModel {
+  id: number;
+  name: string;
+  price: number;
+  requiredTimeMin: number;
+  procedureImage: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
