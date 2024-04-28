@@ -5,7 +5,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { BookingService } from './domain/booking/booking.service';
 import { BookingController } from './domain/booking/booking.controller';
 import { UsersModule } from './domain/users/users.module';
-import { ClientModule } from './domain/clients/client.module';
+import { ClientInfrastructureModule } from './domain/clients/client.infrastructure.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProcedureModule } from './domain/procedures/procedure.module';
 
@@ -18,8 +18,8 @@ import { ProcedureModule } from './domain/procedures/procedure.module';
       max: 10,
       ttl: 600,
     }),
+    ClientInfrastructureModule,
     UsersModule,
-    ClientModule,
     ProcedureModule,
   ],
   controllers: [AppController, BookingController],
