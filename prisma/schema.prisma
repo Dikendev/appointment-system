@@ -22,18 +22,18 @@ model Profile {
   password       String
   profilePicture String?
   phoneNumber    String?
-  userId         Int     @unique
-  clientId       Int     @unique
-  user           User    @relation(fields: [userId], references: [id])
-  client         Client  @relation(fields: [clientId], references: [id])
+  userId         Int?    @unique
+  clientId       Int?    @unique
+  user           User?   @relation(fields: [userId], references: [id])
+  client         Client? @relation(fields: [clientId], references: [id])
 }
 
 model WorkingTime {
   id      Int      @id @default(autoincrement())
   dayTime DateTime
   userId  Int
-  from    DateTime
-  to      DateTime
+  start   DateTime
+  end     DateTime
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
