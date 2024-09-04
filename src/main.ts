@@ -1,15 +1,24 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { LoggerServiceAdapter } from './external/logger/infrastructure/logger-service-adapter';
+import { Logger } from '@nestjs/common';
+import { ExceptionFilter } from './infrastructure/filter/exception.filter';
+import { PrismaExceptionFilter } from './infrastructure/prisma-exception/prisma-exception.filter';
+import { globalConfig } from './config/infrastructure/nestjs/global.config';
 
 (async () => {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
-  app.useLogger(app.get(LoggerServiceAdapter));
-  app.useGlobalPipes(new ValidationPipe());
-  app.enableShutdownHooks();
-  app.enableCors();
-  await app.listen(3000);
+  globalConfig(app);
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(
+    new ExceptionFilter(),
+    new PrismaExceptionFilter(httpAdapter),
+  );
+
+  await app.listen(process.env.PORT);
+
+  const logger = new Logger('NestApplication');
+  logger.log(`Server running on http://localhost:${process.env.PORT}`);
 })();
