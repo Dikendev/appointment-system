@@ -9,7 +9,9 @@ datasource db {
 
 model User {
   id           Int           @id @default(autoincrement())
+  name         String
   profile      Profile?
+  password     String
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   workingTimes WorkingTime[]
@@ -17,9 +19,7 @@ model User {
 }
 
 model Profile {
-  name           String
   email          String  @unique
-  password       String
   profilePicture String?
   phoneNumber    String?
   userId         Int?    @unique
@@ -39,7 +39,9 @@ model WorkingTime {
 
 model Client {
   id        Int       @id @default(autoincrement())
+  name      String
   profile   Profile?
+  password  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   bookings  Booking[]
