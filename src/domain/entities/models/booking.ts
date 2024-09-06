@@ -1,12 +1,8 @@
-import { Client } from './client';
-import { Procedure } from './procedure';
-import { User } from './user';
-
 export class Booking {
   id: number;
-  user: User;
-  client: Client;
-  procedure: Procedure;
+  userId: number;
+  clientId: number;
+  procedureId: number;
   total: number;
   startAt: Date;
   finishAt: Date;

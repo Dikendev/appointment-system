@@ -5,7 +5,7 @@ import { Profile } from './profile';
 export class User {
   id: number;
   name: string;
-  profile: Profile;
+  profile?: Profile;
   password?: string;
   createdAt: Date;
   updatedAt: Date;

@@ -8,14 +8,14 @@ export class WorkingTime {
   dayTime: Date;
   start: Date;
   end: Date;
-  user: User;
+  userId: number;
 
   constructor(data: WorkingTimeDto, user: User) {
     this.id = data.id;
     this.dayTime = data.dayTime;
     this.start = data.start;
     this.end = data.end;
-    this.user = user;
+    this.userId = user.id;
 
     WorkingTime.count++;
   }
