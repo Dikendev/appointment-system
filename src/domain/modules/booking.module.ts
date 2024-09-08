@@ -4,9 +4,10 @@ import { IBookingRepository } from '../repositories/booking/booking-repository.i
 import { BookingRepository } from '../repositories/booking/booking.repository';
 import { BookingController } from '../../presentation/controllers/booking/booking.controller';
 import { BookingUseCase } from '../use-cases/booking/booking.use-case';
+import { ProcedureModule } from './procedure.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, ProcedureModule],
   providers: [
     BookingUseCase,
     { provide: IBookingRepository, useClass: BookingRepository },

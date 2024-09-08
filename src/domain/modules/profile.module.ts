@@ -3,6 +3,7 @@ import { IProfileRepository } from '../repositories/profile/profile-repository.i
 import { ProfileRepository } from '../repositories/profile/profile.repository';
 import { ProfileUseCase } from '../use-cases/profile/profile.use-case';
 import { PrismaModule } from '../../infrastructure/database/prisma/prisma.module';
+import { ProfileController } from '../../presentation/controllers/profile/profile.controller';
 
 @Module({
   imports: [PrismaModule],
@@ -10,7 +11,7 @@ import { PrismaModule } from '../../infrastructure/database/prisma/prisma.module
     ProfileUseCase,
     { provide: IProfileRepository, useClass: ProfileRepository },
   ],
-  controllers: [],
+  controllers: [ProfileController],
   exports: [IProfileRepository],
 })
 export class ProfileModule {}

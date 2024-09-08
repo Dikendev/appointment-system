@@ -1,19 +1,15 @@
-import { Module } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { Global, Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
-import { JWT_STRATEGY } from './jwt-strategy/constants';
 import { RepositoryModule } from '../repositories/repository.module';
+import { JwtStrategy } from './jwt-strategy/jwt-strategy';
+import { PassportModule } from '@nestjs/passport';
 
+@Global()
 @Module({
-  imports: [
-    RepositoryModule,
-    JwtModule.register({
-      secret: JWT_STRATEGY.secret,
-      global: true,
-    }),
-  ],
-  providers: [AuthService, ConfigService, JwtService],
-  exports: [AuthService, JwtService],
+  imports: [RepositoryModule, PassportModule, JwtModule],
+  providers: [AuthService, ConfigService, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

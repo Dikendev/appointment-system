@@ -19,7 +19,6 @@ import { RepositoryModule } from './domain/repositories/repository.module';
 @Module({
   imports: [
     PrismaModule,
-    AuthModule,
     LoggerModule,
     ContextModule,
     ConfigModule,
@@ -30,6 +29,7 @@ import { RepositoryModule } from './domain/repositories/repository.module';
     WorkingTimeModule,
     ClientModule,
     RepositoryModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
