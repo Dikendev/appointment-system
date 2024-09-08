@@ -8,67 +8,82 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
+  id           String        @id @default(cuid())
   name         String
   profile      Profile?
   password     String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
   workingTimes WorkingTime[]
   bookings     Booking[]
-}
 
-model Profile {
-  email          String  @unique
-  profilePicture String?
-  phoneNumber    String?
-  userId         Int?    @unique
-  clientId       Int?    @unique
-  user           User?   @relation(fields: [userId], references: [id])
-  client         Client? @relation(fields: [clientId], references: [id])
-}
-
-model WorkingTime {
-  id      Int      @id @default(autoincrement())
-  dayTime DateTime
-  userId  Int
-  start   DateTime
-  end     DateTime
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("users")
 }
 
 model Client {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(cuid())
   name      String
   profile   Profile?
   password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   bookings  Booking[]
+
+  @@map("clients")
+}
+
+model Profile {
+  id             String  @id @default(cuid())
+  email          String  @unique
+  profilePicture String? @map("profile_picture")
+  phoneNumber    String? @map("phone_number")
+  userId         String? @unique
+  clientId       String? @unique
+  user           User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client         Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "userId")
+  @@index([clientId], name: "clientId")
+  @@map("profiles")
+}
+
+model WorkingTime {
+  id      String   @id @default(cuid())
+  dayTime DateTime @map("day_time")
+  userId  String
+  start   DateTime
+  end     DateTime
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("working_times")
 }
 
 model Procedure {
-  id              Int       @id @default(autoincrement())
+  id              String    @id @default(cuid())
   name            String    @unique
   price           Int
-  requiredTimeMin Int
-  procedureImage  String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  requiredTimeMin Int       @map("required_time_min")
+  procedureImage  String?   @map("procedure_image")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
   bookings        Booking[]
+
+  @@map("procedures")
 }
 
 model Booking {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  clientId    Int
-  procedureId Int
+  id          String    @id @default(cuid())
+  userId      String
+  clientId    String
+  procedureId String
   total       Int
-  startAt     DateTime
-  finishAt    DateTime
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  startAt     DateTime  @map("start_at")
+  finishAt    DateTime  @map("finish_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
   user        User      @relation(fields: [userId], references: [id])
   client      Client    @relation(fields: [clientId], references: [id])
   procedure   Procedure @relation(fields: [procedureId], references: [id])
+
+  @@map("bookings")
 }
