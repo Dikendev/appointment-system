@@ -1,7 +1,7 @@
 import { Booking } from './booking';
 
 export class Procedure {
-  id: number;
+  id: string;
   name: string;
   price: number;
   requiredTimeMin: number;

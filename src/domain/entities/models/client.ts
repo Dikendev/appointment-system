@@ -2,7 +2,7 @@ import { Booking } from './booking';
 import { Profile } from './profile';
 
 export class Client {
-  id: number;
+  id: string;
   name: string;
   profile?: Profile;
   password: string;

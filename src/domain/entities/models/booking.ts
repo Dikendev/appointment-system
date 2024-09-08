@@ -1,8 +1,8 @@
 export class Booking {
-  id: number;
-  userId: number;
-  clientId: number;
-  procedureId: number;
+  id: string;
+  userId: string;
+  clientId: string;
+  procedureId: string;
   total: number;
   startAt: Date;
   finishAt: Date;
