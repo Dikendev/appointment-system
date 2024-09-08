@@ -13,7 +13,7 @@ export type RegisterDto = z.infer<typeof registerSchema>;
 
 export const userSchema = z.object({
   name: z.string(),
-  profile: profileSchema.optional(),
+  profile: profileSchema,
   password: z.string(),
   workingTimes: z.array(workingTimeSchema).optional(),
 });

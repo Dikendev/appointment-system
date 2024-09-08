@@ -3,7 +3,7 @@ import { profileSchema } from './profile.dto';
 
 export const clientSchema = z.object({
   name: z.string(),
-  profile: profileSchema.optional(),
+  profile: profileSchema,
   password: z.string(),
 });
 

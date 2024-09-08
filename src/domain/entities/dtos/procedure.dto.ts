@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 export const procedureSchema = z.object({
-  name: z.string().optional(),
-  price: z.number().optional(),
-  requiredTimeMin: z.number().optional(),
+  name: z.string(),
+  price: z.number(),
+  requiredTimeMin: z.number(),
   procedureImage: z.string().optional(),
 });
 
