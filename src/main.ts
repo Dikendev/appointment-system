@@ -17,6 +17,7 @@ import { globalConfig } from './config/infrastructure/nestjs/global.config';
     new PrismaExceptionFilter(httpAdapter),
   );
 
+  app.setGlobalPrefix('api');
   await app.listen(process.env.PORT);
 
   const logger = new Logger('NestApplication');
