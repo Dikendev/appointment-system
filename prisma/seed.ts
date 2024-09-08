@@ -1,63 +1,100 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { ClientDto, ProcedureDto, UserDto } from '../src/domain/entities/dtos';
 
 const prisma = new PrismaClient();
 
-const serviceData: Prisma.ProcedureCreateInput[] = [
+const proceduresMock: ProcedureDto[] = [
   {
     name: 'Corte de cabelo',
     price: 80,
     requiredTimeMin: 100,
+    procedureImage: 'base64',
   },
   {
-    name: 'Banho em Gel',
-    price: 180,
-    requiredTimeMin: 150,
+    name: 'Manicure',
+    price: 50,
+    requiredTimeMin: 60,
+    procedureImage: 'base64',
   },
 ];
 
-const userData: Prisma.UserCreateInput[] = [
+const usersMock: UserDto[] = [
   {
     name: 'Cristina Freitas',
-    email: 'Cristina@gmail.com',
+    profile: {
+      email: 'Cristina@gmail.com',
+    },
     password: '12345',
   },
   {
-    name: 'Diego Kennedy ',
-    email: 'diego@gmail.com',
-    password: '737373',
+    name: 'Diego Kennedy',
+    profile: {
+      email: 'diego@gmail.com',
+    },
+    password: '99999',
   },
 ];
 
-const clientData: Prisma.ClientCreateInput[] = [
+const clientsMock: ClientDto[] = [
   {
     name: 'Dedeco',
-    email: 'dedeco@gmail.com',
+    profile: {
+      email: 'dedeco@gmail.com',
+    },
+    password: 'dedeco123',
   },
   {
-    name: 'David',
-    email: 'David@gmail.com',
+    name: 'João',
+    profile: {
+      email: 'joao@gmail.com',
+    },
+    password: 'joao123',
   },
 ];
+
 async function main() {
   console.log(`Start seeding ...`);
 
-  for (const u of serviceData) {
-    const service = await prisma.procedure.create({
-      data: u,
+  await clearData();
+
+  for (const p of proceduresMock) {
+    const procedure = await prisma.procedure.create({
+      data: {
+        name: p.name,
+        price: p.price,
+        requiredTimeMin: p.requiredTimeMin,
+        procedureImage: p.procedureImage,
+      },
     });
-    console.log(`Created service with id:${service.id}`);
+    console.log(`Created service with id:${procedure.id}`);
   }
 
-  for (const u of userData) {
+  for (const u of usersMock) {
     const user = await prisma.user.create({
-      data: u,
+      data: {
+        name: u.name,
+        profile: {
+          create: {
+            email: u.profile.email,
+          },
+        },
+        password: u.password,
+      },
     });
     console.log(`Created user with id:${user.id}`);
   }
 
-  for (const u of clientData) {
+  for (const c of clientsMock) {
     const client = await prisma.client.create({
-      data: u,
+      data: {
+        name: c.name,
+        profile: {
+          create: {
+            email: c.profile.email,
+          },
+        },
+        password: c.password,
+      },
     });
     console.log(`Created client with id:${client.id}`);
   }
@@ -73,3 +110,13 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+
+async function clearData() {
+  await prisma.user.deleteMany();
+  await prisma.client.deleteMany();
+  await prisma.profile.deleteMany();
+  await prisma.procedure.deleteMany();
+  await prisma.booking.deleteMany();
+  console.log('Data cleared');
+  await prisma.$disconnect();
+}
