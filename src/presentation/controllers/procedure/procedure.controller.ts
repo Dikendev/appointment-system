@@ -1,7 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ProcedureDto } from '../../../domain/entities/dtos';
 import { Procedure } from '../../../domain/entities/models';
 import { ProcedureUseCase } from '../../../domain/use-cases/procedure/procedure.use-case';
+import { JwtAuthGuard } from '../../../domain/auth/jwt-strategy/jwt-auth.guard';
 
 @Controller('procedure')
 export class ProcedureController {
@@ -13,17 +22,18 @@ export class ProcedureController {
   }
 
   @Get(':id')
-  async findById(id: number): Promise<Procedure> {
+  async findById(id: string): Promise<Procedure> {
     return this.procedureUseCase.findById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(): Promise<Procedure[]> {
     return this.procedureUseCase.findAll();
   }
 
   @Delete(':id')
-  async delete(@Param() id: number): Promise<Procedure> {
+  async delete(@Param() id: string): Promise<Procedure> {
     return this.procedureUseCase.deleteById(id);
   }
 
