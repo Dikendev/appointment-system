@@ -11,7 +11,7 @@ export class ClientUseCase {
     return this.clientRepository.create(body);
   }
 
-  async findById(id: number): Promise<Client> {
+  async findById(id: string): Promise<Client> {
     return this.clientRepository.findById(id);
   }
 
@@ -19,7 +19,7 @@ export class ClientUseCase {
     return this.clientRepository.findAll();
   }
 
-  async delete(id: number): Promise<Client> {
+  async delete(id: string): Promise<Client> {
     return this.clientRepository.delete(id);
   }
 }
