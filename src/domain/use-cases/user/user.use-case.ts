@@ -1,15 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { User } from '../../entities/models/user';
 import { IUserRepository } from '../../repositories/user/user-repository.interface';
-import { RegisterDto, UserDto } from '../../entities/dtos';
-import { AuthService } from '../../auth/auth.service';
-import { Response } from 'express';
+import { RegisterDto } from '../../entities/dtos';
+import { AuthService, Logout } from '../../auth/auth.service';
+import { Request, Response } from 'express';
+import { LoginDto } from '../../auth/dto/login-dto';
+import {
+  Logger,
+  LoggerKey,
+} from '../../../external/logger/domain/logger.repository';
+import { UserFactory } from './user-factory.service';
 
-export type Param = { id: number } | { email: string };
+export type Param = { id: string } | { email: string };
 
 @Injectable()
 export class UserUseCase {
   constructor(
+    @Inject(LoggerKey) private logger: Logger,
     private readonly authService: AuthService,
     private readonly userRepository: IUserRepository,
   ) {}
@@ -24,33 +31,30 @@ export class UserUseCase {
   }
 
   async users(): Promise<User[]> {
-    console.log('UserUseCase.users');
-
     const users = await this.userRepository.findAll();
-    return users;
+    return users.map((user) => UserFactory.omitPassword(user));
   }
-
-  async create(body: UserDto): Promise<User> {
-    return this.userRepository.create(body);
-  }
-
-  // async updateUser(params: {
-  //   where: Prisma.UserWhereUniqueInput;
-  //   data: Prisma.UserUpdateInput;
-  // }): Promise<User> {
-  //   const { where, data } = params;
-  //   return this.prisma.user.update({
-  //     where,
-  //     data,
-  //   });
-  // }
 
   async register(body: RegisterDto, response: Response): Promise<User> {
-    const userRegistered = await this.authService.register(body, response);
-    return userRegistered.user;
+    const user = await this.authService.registerUser(body, response);
+    this.logger.info(`User ${user.profile.email} registered`);
+    return user;
   }
 
-  async deleteUser(id: number): Promise<User> {
+  async login(body: LoginDto, response: Response): Promise<User> {
+    const user = await this.authService.login(body, response);
+    this.logger.info(`User ${user.profile.email} logged in`);
+    return user;
+  }
+
+  async logout(request: Request, response: Response): Promise<Logout> {
+    const user = request.user;
+    const msg = await this.authService.logout(response);
+    this.logger.info(`User ${user.profile.email} logged out`);
+    return msg;
+  }
+
+  async deleteUser(id: string): Promise<User> {
     return this.userRepository.deleteById(id);
   }
 
