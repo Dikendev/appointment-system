@@ -4,7 +4,6 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Logger } from 'winston';
 import { LoggerKey } from '../../../external/logger/domain/logger.repository';
 import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import { LogLevel } from '../../../external/logger/domain/log';
 import { Client } from '../../entities/models';
 
 @Injectable()
@@ -24,7 +23,7 @@ export class ClientRepository implements IClientRepository {
     });
   }
 
-  async findById(id: number): Promise<Client> {
+  async findById(id: string): Promise<Client> {
     this.logger.info(`Fetching client with id: ${id}`);
 
     const client = await this.prismaService.client.findUnique({
@@ -39,20 +38,12 @@ export class ClientRepository implements IClientRepository {
   }
 
   async findAll(): Promise<Client[]> {
-    const clientsResponse = await this.prismaService.client.findMany({
+    return this.prismaService.client.findMany({
       include: { bookings: true },
     });
-
-    if (!clientsResponse.length) {
-      throw new NotFoundException();
-    }
-
-    this.logger.log(LogLevel.Info, `Client with id: fetched`);
-
-    return clientsResponse;
   }
 
-  async delete(id: number): Promise<Client> {
+  async delete(id: string): Promise<Client> {
     try {
       return this.prismaService.client.delete({
         where: { id },
