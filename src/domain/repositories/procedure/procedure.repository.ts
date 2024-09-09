@@ -12,7 +12,7 @@ import { IProcedureRepository } from './procedure-repository.interface';
 export class ProcedureRepository implements IProcedureRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findById(id: number): Promise<Procedure> {
+  async findById(id: string): Promise<Procedure> {
     const procedure = await this.prismaService.procedure.findUnique({
       where: { id: id },
     });
@@ -23,11 +23,7 @@ export class ProcedureRepository implements IProcedureRepository {
   }
 
   async findAll(): Promise<Procedure[]> {
-    const procedures = await this.prismaService.procedure.findMany();
-
-    if (!procedures.length) throw new NotFoundException();
-
-    return procedures;
+    return this.prismaService.procedure.findMany();
   }
 
   async create(procedureDto: ProcedureDto): Promise<Procedure> {
@@ -45,7 +41,7 @@ export class ProcedureRepository implements IProcedureRepository {
     }
   }
 
-  async deleteById(id: number): Promise<Procedure> {
+  async deleteById(id: string): Promise<Procedure> {
     try {
       return await this.prismaService.procedure.delete({
         where: { id: id },
