@@ -83,7 +83,6 @@ export class AuthService {
       response.cookie('access_token', accessToken, { httpOnly: true });
       return user;
     } catch (error) {
-      console.log('error', error);
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }

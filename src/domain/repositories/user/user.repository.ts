@@ -36,8 +36,6 @@ export class UserRepository implements IUserRepository {
       where: { email: email },
     });
 
-    console.log(profile);
-
     if (!profile) return null;
 
     const user = await this.prismaService.user.findUnique({

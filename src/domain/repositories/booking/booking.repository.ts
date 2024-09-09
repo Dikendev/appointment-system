@@ -11,8 +11,6 @@ export class BookingRepository implements IBookingRepository {
   async create(body: BookingDto): Promise<Booking> {
     const { startAt, finishAt, userId, clientId, procedureId, total } = body;
 
-    console.log('body', body);
-
     return this.prismaService.booking.create({
       data: {
         user: { connect: { id: userId } },

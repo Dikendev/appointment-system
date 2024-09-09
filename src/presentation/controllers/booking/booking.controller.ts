@@ -25,7 +25,6 @@ export class BookingController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async findAllByUserId(@UserLogged() user: User): Promise<Booking[]> {
-    console.log('user decorator', user);
     return this.bookingUseCase.findAllBookingsByUserId(user.id);
   }
 
