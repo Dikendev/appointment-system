@@ -1,7 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { ClientDto, ProcedureDto, UserDto } from '../src/domain/entities/dtos';
+import { hashPassword } from '../src/domain/auth/hash-password';
+import { Logger } from '@nestjs/common';
 
 const prisma = new PrismaClient();
+
+const logger = new Logger('NestApplication');
 
 const proceduresMock: ProcedureDto[] = [
   {
@@ -52,10 +56,33 @@ const clientsMock: ClientDto[] = [
   },
 ];
 
+function setDate(day: number, month: number, hour: number): Date {
+  const date = new Date();
+  date.setMonth(month);
+  date.setDate(day);
+  date.setHours(hour);
+  return date;
+}
+
+async function clearData() {
+  await prisma.user.deleteMany();
+  await prisma.client.deleteMany();
+  await prisma.profile.deleteMany();
+  await prisma.procedure.deleteMany();
+  await prisma.booking.deleteMany();
+  logger.log('Data cleared');
+  await prisma.$disconnect();
+  logger.log('disconnected');
+}
+
 async function main() {
-  console.log(`Start seeding ...`);
+  logger.log(`Start seeding ...`);
 
   await clearData();
+
+  const procedureIds: string[] = [];
+  const userIds: string[] = [];
+  const clientIds: string[] = [];
 
   for (const p of proceduresMock) {
     const procedure = await prisma.procedure.create({
@@ -66,10 +93,13 @@ async function main() {
         procedureImage: p.procedureImage,
       },
     });
-    console.log(`Created service with id:${procedure.id}`);
+
+    procedureIds.push(procedure.id);
+    logger.log(`Created service with id:${procedure.id}`);
   }
 
   for (const u of usersMock) {
+    const hashedPassword = await hashPassword(u.password);
     const user = await prisma.user.create({
       data: {
         name: u.name,
@@ -78,10 +108,12 @@ async function main() {
             email: u.profile.email,
           },
         },
-        password: u.password,
+        password: hashedPassword,
       },
     });
-    console.log(`Created user with id:${user.id}`);
+
+    userIds.push(user.id);
+    logger.log(`Created user with id:${user.id}`);
   }
 
   for (const c of clientsMock) {
@@ -96,9 +128,35 @@ async function main() {
         password: c.password,
       },
     });
-    console.log(`Created client with id:${client.id}`);
+    clientIds.push(client.id);
+    logger.log(`Created client with id:${client.id}`);
   }
-  console.log(`Seeding finished`);
+
+  for (const userId of userIds) {
+    for (let i = 0; i < procedureIds.length; i++) {
+      const randomHour = Math.floor(Math.random() * 10);
+      const booking = await prisma.booking.create({
+        data: {
+          clientId: clientIds[i],
+          userId: userId,
+          procedureId: procedureIds[i],
+          total: proceduresMock[i].price,
+          startAt: setDate(1, 9, 1 + randomHour),
+          finishAt: setDate(
+            1,
+            9,
+            1 + randomHour + proceduresMock[i].requiredTimeMin,
+          ),
+        },
+      });
+
+      logger.log(
+        `Created booking with id:${booking.id}, to the user with id:${userId}`,
+      );
+    }
+  }
+
+  logger.log('Seeding finished');
 }
 
 main()
@@ -110,13 +168,3 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
-
-async function clearData() {
-  await prisma.user.deleteMany();
-  await prisma.client.deleteMany();
-  await prisma.profile.deleteMany();
-  await prisma.procedure.deleteMany();
-  await prisma.booking.deleteMany();
-  console.log('Data cleared');
-  await prisma.$disconnect();
-}
