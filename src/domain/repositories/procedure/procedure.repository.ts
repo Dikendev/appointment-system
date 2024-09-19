@@ -42,12 +42,8 @@ export class ProcedureRepository implements IProcedureRepository {
   }
 
   async deleteById(id: string): Promise<Procedure> {
-    try {
-      return await this.prismaService.procedure.delete({
-        where: { id: id },
-      });
-    } catch (error) {
-      throw new NotFoundException();
-    }
+    return this.prismaService.procedure.delete({
+      where: { id: id },
+    });
   }
 }
