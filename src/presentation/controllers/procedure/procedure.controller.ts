@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../../../domain/auth/jwt-strategy/jwt-auth.guard';
 export class ProcedureController {
   constructor(private readonly procedureUseCase: ProcedureUseCase) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() body: ProcedureDto): Promise<Procedure> {
     return this.procedureUseCase.create(body);
@@ -33,7 +34,7 @@ export class ProcedureController {
   }
 
   @Delete(':id')
-  async delete(@Param() id: string): Promise<Procedure> {
+  async delete(@Param('id') id: string): Promise<Procedure> {
     return this.procedureUseCase.deleteById(id);
   }
 
