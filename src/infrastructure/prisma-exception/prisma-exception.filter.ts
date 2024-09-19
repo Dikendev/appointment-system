@@ -15,17 +15,17 @@ export class PrismaExceptionFilter
   extends BaseExceptionFilter
   implements ExceptionFilter
 {
-  catch(exception: Error, host: ArgumentsHost) {
+  catch(exception: PrismaClientKnownRequestError, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse();
-    const message = exception.message;
+    const message = exception.meta.cause;
 
     switch (exception.constructor) {
       case PrismaClientKnownRequestError:
       case PrismaClientValidationError:
         response.status(HttpStatus.BAD_REQUEST).json({
           statusCode: HttpStatus.BAD_REQUEST,
-          message: message,
+          message,
         });
         break;
       default:
