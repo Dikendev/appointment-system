@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
-import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './dto/login-dto';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from '../entities/dtos/user.dto';
@@ -38,20 +37,12 @@ interface JwtSignIn {
   sub: string;
 }
 
-const JwtTokenSecret = {
-  ACCESS_JWT_SECRET: 'ACCESS_JWT_SECRET',
-  REFRESH_JWT_SECRET: 'REFRESH_JWT_SECRET',
-} as const;
-
-type JwtTokenSecret = keyof typeof JwtTokenSecret;
-
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(LoggerKey) private readonly logger: Logger,
     private readonly jwtService: JwtService,
     private readonly userRepository: IUserRepository,
-    private readonly configService: ConfigService,
   ) {}
 
   async refreshToken(request: Request, response: Response): Promise<User> {
@@ -63,11 +54,9 @@ export class AuthService {
       throw new UnauthorizedException('Need to be logged in');
     }
 
-    let payload: Payload;
-
     try {
-      payload = this.jwtService.verify<Payload>(refreshToken, {
-        secret: this.configService.get('REFRESH_JWT_SECRET'),
+      const payload = this.jwtService.verify<Payload>(refreshToken, {
+        secret: process.env.REFRESH_JWT_SECRET,
       });
 
       const payloadEmail = payload.email;
@@ -95,7 +84,7 @@ export class AuthService {
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('REFRESH_JWT_SECRET'),
+      secret: process.env.REFRESH_JWT_SECRET,
       expiresIn: '7d',
     });
 
@@ -176,7 +165,7 @@ export class AuthService {
 
   validateAccessToken(accessToken: string): Payload {
     try {
-      const secret = this.configService.get('ACCESS_JWT_SECRET');
+      const secret = process.env.ACCESS_JWT_SECRET;
       return this.validateToken(accessToken, secret);
     } catch (error) {
       throw new UnauthorizedException('Invalid access token');
@@ -185,7 +174,7 @@ export class AuthService {
 
   validateRefreshToken(refreshToken: string): Payload {
     try {
-      const secret = this.configService.get('REFRESH_JWT_SECRET');
+      const secret = process.env.REFRESH_JWT_SECRET;
       return this.validateToken(refreshToken, secret);
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
@@ -200,27 +189,27 @@ export class AuthService {
   }
 
   accessTokenSignIn(payload: JwtSignIn): string {
-    const expiresIn = this.configService.get<string>('ACCESS_TOKEN_EXPIRATION');
-    return this.jwtSignIn(payload, 'ACCESS_JWT_SECRET', expiresIn);
+    const expiresIn = process.env.ACCESS_TOKEN_EXPIRATION;
+    const accessTokenSecret = process.env.ACCESS_JWT_SECRET;
+    return this.jwtSignIn(payload, accessTokenSecret, expiresIn);
   }
 
   refreshTokenSignIn(payload: JwtSignIn): string {
-    const expiresIn = this.configService.get<string>(
-      'REFRESH_TOKEN_EXPIRATION',
-    );
-    return this.jwtSignIn(payload, 'ACCESS_JWT_SECRET', expiresIn);
+    const expiresIn = process.env.REFRESH_TOKEN_EXPIRATION;
+    const refreshTokenSecret = process.env.REFRESH_JWT_SECRET;
+    return this.jwtSignIn(payload, refreshTokenSecret, expiresIn);
   }
 
   private jwtSignIn(
     payload: JwtSignIn,
-    jwtTokenSecret: JwtTokenSecret,
+    secret: string,
     expiresIn: string,
   ): string {
     return this.jwtService.sign(
       { ...payload },
       {
-        secret: this.configService.get<string>(jwtTokenSecret),
-        expiresIn: expiresIn,
+        secret,
+        expiresIn,
       },
     );
   }
