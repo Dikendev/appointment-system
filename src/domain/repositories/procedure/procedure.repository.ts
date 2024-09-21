@@ -22,6 +22,12 @@ export class ProcedureRepository implements IProcedureRepository {
     return procedure;
   }
 
+  findByName(name: string): Promise<Procedure> {
+    return this.prismaService.procedure.findUnique({
+      where: { name: name.toLowerCase() },
+    });
+  }
+
   async findAll(): Promise<Procedure[]> {
     return this.prismaService.procedure.findMany();
   }
